@@ -1,0 +1,21 @@
+@-webkit-keyframes highlight {
+	from {
+		color: #FFF;
+		background: blue;
+	}
+
+	to {
+		color: inherit;
+		background: none;
+	}
+}
+
+.json-diff {
+	/*color: #FFF;*/
+	/*background: purple;*/
+	-webkit-animation: highlight 1.5s 1 ease;
+}
+
+.json-prop {
+	padding: .2em;
+}

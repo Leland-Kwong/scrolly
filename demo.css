@@ -1,0 +1,80 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  font-family: sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+body {
+  margin: 0;
+}
+button {
+  font-size: 1rem;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+}
+body {
+  padding: 0 1em;
+}
+.scrollable {
+  height: 300px;
+  overflow: auto;
+  background: #DDD;
+  -webkit-transition: all .2s ease;
+          transition: all .2s ease;
+}
+.scrollable::after {
+  content: "";
+  display: block;
+  height: 1000px;
+}
+.child {
+  background: #FAFFAC;
+}
+.child.scrolledge-reached {
+  -webkit-animation: bounce .2s ease 1;
+          animation: bounce .2s ease 1;
+}
+@-webkit-keyframes bounce {
+  50% {
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+@keyframes bounce {
+  50% {
+    -webkit-transform: translateY(20px);
+            transform: translateY(20px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+main {
+  position: relative;
+}
+scrolly-data {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.event-list {
+  width: 100%;
+}
+.event-list__item {
+  text-align: left;
+}

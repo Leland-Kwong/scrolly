@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Scrolly - nifty little scrolling tool</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="demo.css">
+	<link rel="stylesheet" href="json-diff.css">
+</head>
+<body>
+
+<h1>Scrolly</h1>
+
+<main>
+	<div class="scrollable">
+		<div class="scrollable child"></div>
+	</div>
+
+	<scrolly-data>
+		<pre></pre>
+
+		<table class="event-list">
+			<thead>
+				<tr class="event-list__item">
+					<th class="event-list__item__timestamp">Time</th>
+					<th class="event-list__item__type">Event</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</scrolly-data>
+</main>
+
+<footer></footer>
+
+<!-- SCRIPTS -->
+<script src="Scrolly.js"></script>
+<script src="json-diff.js"></script>
+<script>
+(function(Scrolly) {
+	var scrollyData = document.querySelector('scrolly-data pre');
+	var eventsList = document.querySelector('.event-list tbody');
+	var prevEvent;
+	var recentEvents = [];
+
+	function scrollHandle(event) {
+		delete event.originalEvent;
+		//event.originalEvent = '{...}';
+
+		var _event = JSON.parse(JSON.stringify(event));
+
+		if (!prevEvent) {
+			prevEvent = JSON.parse(JSON.stringify(event));
+		}
+
+		_event = JSONDiff(_event, prevEvent);
+		scrollyData.innerHTML = JSON.stringify(_event, null, 2).replace(/"/g, '');
+		prevEvent = JSON.parse(JSON.stringify(event));
+
+		recentEvents.length > 2 &&
+			recentEvents.shift();
+		recentEvents.push({
+			type: event.type,
+			timestamp: event.timestamp
+		});
+		var html = '';
+		for (var i=0; i<recentEvents.length; i++) {
+			html +=
+				'<tr class="event-list__item">' +
+					'<td class="event-list__item__timestamp">' +
+						recentEvents[i].timestamp.getMinutes() + ':' +
+						recentEvents[i].timestamp.getSeconds() + ':' +
+						recentEvents[i].timestamp.getMilliseconds() +
+					'</td>' +
+					'<td class="event-list__item__type">' + recentEvents[i].type + '</td>' +
+				'</tr>';
+		}
+		eventsList.innerHTML = html;
+
+		if (event.type === 'scrolly.scroll') {
+			this.element.classList.remove('scrolledge-reached');
+		}
+	}
+
+	var childScrolly = Scrolly('.child', {
+			wheelBlock: true,
+			scrollendDelay: 250
+		})
+		.on('scrolly.scrolledgereached', function(e) {
+			this.element.classList.add('scrolledge-reached');
+			scrollHandle.call(this, e);
+		})
+		.on('scrolly.scroll', scrollHandle)
+		.on('scrolly.scrollend', scrollHandle);
+
+	window.scrollTest = function() {
+		var distToScroll = 100;
+
+		(function scroll() {
+			distToScroll--;
+			childScrolly.element.scrollTop += 1;
+			distToScroll &&
+				setTimeout(scroll, 1000 / 60);
+		})()
+	}
+})(Scrolly);
+</script>
+
+</script>
+</body>
+</html>
